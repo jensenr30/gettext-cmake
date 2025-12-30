@@ -162,21 +162,21 @@ function(configure_gettext)
             DEPENDS "${GETTEXT_GMOFILE_DESTINATION}/${lang}/${GETTEXT_DOMAIN}.gmo")
         add_dependencies("${GETTEXT_TARGET_NAME}" "${GETTEXT_TARGET_NAME}-${lang}")
 
-        if(GETTEXT_INSTALL_DESTINATION)
-            if(NOT EXISTS "${GETTEXT_INSTALL_DESTINATION}/${lang}/LC_MESSAGES/")
-                message(FATAL_ERROR "Installation directory does not exist: ${GETTEXT_INSTALL_DESTINATION}/${lang}/LC_MESSAGES/")
-            endif()
-            if(GETTEXT_INSTALL_COMPONENT)
-                set(comp_line "COMPONENT" "${GETTEXT_INSTALL_COMPONENT}")
-            else()
-                set(comp_line)
-            endif()
-
-            install(FILES "${GETTEXT_GMOFILE_DESTINATION}/${lang}/${GETTEXT_DOMAIN}.gmo"
-                DESTINATION "${GETTEXT_INSTALL_DESTINATION}/${lang}/LC_MESSAGES/"
-                ${comp_line}
-                RENAME "${GETTEXT_DOMAIN}.mo")
-        endif()
+        # if(GETTEXT_INSTALL_DESTINATION)
+        #     if(NOT EXISTS "${GETTEXT_INSTALL_DESTINATION}/${lang}/LC_MESSAGES/")
+        #         message(FATAL_ERROR "Installation directory does not exist: ${GETTEXT_INSTALL_DESTINATION}/${lang}/LC_MESSAGES/")
+        #     endif()
+        #     if(GETTEXT_INSTALL_COMPONENT)
+        #         set(comp_line "COMPONENT" "${GETTEXT_INSTALL_COMPONENT}")
+        #     else()
+        #         set(comp_line)
+        #     endif()
+        #
+        #     install(FILES "${GETTEXT_GMOFILE_DESTINATION}/${lang}/${GETTEXT_DOMAIN}.gmo"
+        #         DESTINATION "${GETTEXT_INSTALL_DESTINATION}/${lang}/LC_MESSAGES/"
+        #         ${comp_line}
+        #         RENAME "${GETTEXT_DOMAIN}.mo")
+        # endif()
 
         if(GETTEXT_BUILD_DESTINATION)
             if(NOT EXISTS "${GETTEXT_BUILD_DESTINATION}/${lang}/LC_MESSAGES/")
