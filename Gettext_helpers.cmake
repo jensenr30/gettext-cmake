@@ -75,6 +75,14 @@ function(configure_gettext)
         set(GETTEXT_GMOFILE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/${GETTEXT_GMOFILE_DESTINATION}")
         file(TO_CMAKE_PATH "${GETTEXT_GMOFILE_DESTINATION}" GETTEXT_GMOFILE_DESTINATION)
     endif()
+    if(NOT IS_ABSOLUTE "${GETTEXT_BUILD_DESTINATION}")
+        set(GETTEXT_BUILD_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/${GETTEXT_BUILD_DESTINATION}")
+        file(TO_CMAKE_PATH "${GETTEXT_BUILD_DESTINATION}" GETTEXT_BUILD_DESTINATION)
+    endif()
+    if(NOT IS_ABSOLUTE "${GETTEXT_INSTALL_DESTINATION}")
+        set(GETTEXT_INSTALL_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/${GETTEXT_INSTALL_DESTINATION}")
+        file(TO_CMAKE_PATH "${GETTEXT_INSTALL_DESTINATION}" GETTEXT_INSTALL_DESTINATION)
+    endif()
 
     # Create needed directories
     if(NOT EXISTS "${GETTEXT_POTFILE_DESTINATION}")
@@ -155,6 +163,9 @@ function(configure_gettext)
         add_dependencies("${GETTEXT_TARGET_NAME}" "${GETTEXT_TARGET_NAME}-${lang}")
 
         if(GETTEXT_INSTALL_DESTINATION)
+            if(NOT EXISTS "${GETTEXT_INSTALL_DESTINATION}/${lang}/LC_MESSAGES/")
+                message(FATAL_ERROR "Installation directory does not exist: ${GETTEXT_INSTALL_DESTINATION}/${lang}/LC_MESSAGES/")
+            endif()
             if(GETTEXT_INSTALL_COMPONENT)
                 set(comp_line "COMPONENT" "${GETTEXT_INSTALL_COMPONENT}")
             else()
@@ -168,11 +179,15 @@ function(configure_gettext)
         endif()
 
         if(GETTEXT_BUILD_DESTINATION)
+            if(NOT EXISTS "${GETTEXT_BUILD_DESTINATION}/${lang}/LC_MESSAGES/")
+                file(MAKE_DIRECTORY "${GETTEXT_BUILD_DESTINATION}/${lang}/LC_MESSAGES/")
+            endif()
             add_custom_command(
                 TARGET "${GETTEXT_TARGET_NAME}-${lang}" PRE_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
                     "${GETTEXT_GMOFILE_DESTINATION}/${lang}/${GETTEXT_DOMAIN}.gmo"
                     "${GETTEXT_BUILD_DESTINATION}/${lang}/LC_MESSAGES/${GETTEXT_DOMAIN}.mo"
+                COMMENT "Copying ${GETTEXT_BUILD_DESTINATION}/${lang}/LC_MESSAGES/${GETTEXT_DOMAIN}.mo"
             )
         endif()
 
